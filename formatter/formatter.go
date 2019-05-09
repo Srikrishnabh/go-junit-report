@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/Srikrishnabh93/go-junit-report/parser"
 )
 
 // JUnitTestSuites is a collection of JUnit test suites.
@@ -38,6 +38,7 @@ type JUnitTestCase struct {
 	Time        string            `xml:"time,attr"`
 	SkipMessage *JUnitSkipMessage `xml:"skipped,omitempty"`
 	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+	Stdout      string            `xml:"system-out,omitempty"`
 }
 
 // JUnitSkipMessage contains the reason why a testcase was skipped.
@@ -110,6 +111,10 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 
 			if test.Result == parser.SKIP {
 				testCase.SkipMessage = &JUnitSkipMessage{strings.Join(test.Output, "\n")}
+			}
+
+			if test.Result == parser.PASS {
+				testCase.Stdout = strings.Join(test.Output, "\n")
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)
